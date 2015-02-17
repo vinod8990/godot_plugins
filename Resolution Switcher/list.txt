@@ -1,0 +1,33 @@
+[Android]
+
+FWVGA Landscape="854x480"
+FWVGA Portrait="480x854"
+HVGA Landscape="480x320"
+HVGA Portrait="320x480"
+WSVGA Landscape="1024x600"
+WSVGA Portrait="600x1024"
+WVGA Landscape="800x480"
+WVGA Portrait="480x800"
+WXGA Landscape="1280x800"
+WXGA Portrait="800x1280"
+
+[Desktop]
+
+Desktop 4:3="1024x768"
+Desktop FHD="1920x1080"
+Desktop FWXGA="1366x768"
+Desktop WXGA="1280x800"
+
+[iPad]
+
+iPad 1/2/Mini Portrait="768x1024"
+iPad 3/4 Portrait="1536x2048"
+iPhone 1/2/Mini Landscape="1024x768"
+iPhone 4/4S Landscape="2048x1536"
+
+[iPhone]
+
+iPhone 4/4S Landscape="960x640"
+iPhone 4/4S Portrait="640x960"
+iPhone 5 Landscape="1136x640"
+iPhone 5 Portrait="640x1136"
