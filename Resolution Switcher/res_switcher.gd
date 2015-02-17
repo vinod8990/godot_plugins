@@ -6,6 +6,7 @@ var main_popup = null
 var config_file = null
 var res_data = null
 var path = null
+var custom_window = null
 
 
 func get_name(): 
@@ -25,6 +26,7 @@ func _enter_tree():
 	
 	add_custom_control(CONTAINER_CANVAS_EDITOR_MENU,toolbar_button)
 	main_popup.connect("item_pressed",self,"switched")
+	custom_window = preload("custom_res_popup.xml").instance()
 
 	
 func reload():
@@ -56,16 +58,17 @@ func switched(id):
 	var key = main_popup.get_item_text(main_popup.get_item_index(id))
 			
 	if key == "Add Custom Size":
-		var c = preload("custom_res_popup.xml").instance()
-		add_child(c)
-		c.set_pos(Vector2(get_tree().get_root().get_rect().size.x/2 - c.get_size().x/2,get_tree().get_root().get_rect().size.y/2 - c.get_size().y/2))
+		if custom_window.get_parent()==null:
+			add_child(custom_window)
+		custom_window.show()
+		custom_window.set_pos(Vector2(get_tree().get_root().get_rect().size.x/2 - custom_window.get_size().x/2,get_tree().get_root().get_rect().size.y/2 - custom_window.get_size().y/2))
 			
 		var addButton = Button.new()
 		addButton.set_text("Add Resolution")
 		addButton.set_h_size_flags(Button.SIZE_EXPAND)
 		addButton.set_custom_minimum_size(Vector2(150,25))
-		addButton.connect("pressed",self,"_on_add_new",[c])
-		c.get_node("vbox/hbox3").add_child(addButton)
+		addButton.connect("pressed",self,"_on_add_new",[addButton],Button.CONNECT_ONESHOT)
+		custom_window.get_node("vbox/hbox3").add_child(addButton)
 	else:
 		var w = res_data[key]["width"]
 		var h = res_data[key]["height"]
@@ -76,16 +79,18 @@ func switched(id):
 		Globals.set("display/test_height",h)
 		Globals.save()
 
-func _on_add_new(new_window):
-	var category = new_window.get_node("vbox/hbox4/category").get_text()
-	var label = new_window.get_node("vbox/hbox1/labelText").get_text()
-	var width = new_window.get_node("vbox/hbox2/widthText").get_text()
-	var height = new_window.get_node("vbox/hbox2/heightText").get_text()
-	remove_child(new_window)
+func _on_add_new(addButton):
+	var category = custom_window.get_node("vbox/hbox4/category").get_text()
+	var label = custom_window.get_node("vbox/hbox1/labelText").get_text()
+	var width = custom_window.get_node("vbox/hbox2/widthText").get_text()
+	var height = custom_window.get_node("vbox/hbox2/heightText").get_text()
 	if config_file.has_section(category):
 		config_file.set_value(category,label,width+"x"+height)
 		config_file.save(path)
 		reload()
+	addButton.disconnect("pressed",self,"_on_add_new")
+	custom_window.get_node("vbox/hbox3").remove_child(addButton)
+	custom_window.hide()
 
 func _exit_tree():
 	main_popup.clear()
@@ -94,3 +99,5 @@ func _exit_tree():
 	toolbar_button.free()
 	toolbar_button=null
 	config_file = null
+	custom_window.free()
+	custom_window = null
