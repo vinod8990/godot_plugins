@@ -22,8 +22,8 @@ Desktop WXGA="1280x800"
 
 iPad 1/2/Mini Portrait="768x1024"
 iPad 3/4 Portrait="1536x2048"
-iPhone 1/2/Mini Landscape="1024x768"
-iPhone 4/4S Landscape="2048x1536"
+iPad 1/2/Mini Landscape="1024x768"
+iPad 3/4  Landscape="2048x1536"
 
 [iPhone]
 
