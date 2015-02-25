@@ -8,7 +8,6 @@ var res_data = null
 var path = null
 var custom_window = null
 
-
 func get_name(): 
 	return "Resolution Switcher"
 
@@ -61,14 +60,11 @@ func switched(id):
 		if custom_window.get_parent()==null:
 			add_child(custom_window)
 		custom_window.show()
-		custom_window.set_pos(Vector2(get_tree().get_root().get_rect().size.x/2 - custom_window.get_size().x/2,get_tree().get_root().get_rect().size.y/2 - custom_window.get_size().y/2))
-			
-		var addButton = Button.new()
-		addButton.set_text("Add Resolution")
-		addButton.set_h_size_flags(Button.SIZE_EXPAND)
-		addButton.set_custom_minimum_size(Vector2(150,25))
-		addButton.connect("pressed",self,"_on_add_new",[addButton],Button.CONNECT_ONESHOT)
-		custom_window.get_node("vbox/hbox3").add_child(addButton)
+		custom_window.popup_centered()
+		custom_window.get_node("vbox/hbox3/addButton").connect("pressed",self,"_on_add_new",[],CONNECT_ONESHOT)
+		custom_window.get_node("vbox/hbox4/category").clear()
+		for section in config_file.get_sections():
+			custom_window.get_node("vbox/hbox4/category").add_item(section)
 	else:
 		var w = res_data[key]["width"]
 		var h = res_data[key]["height"]
@@ -79,17 +75,23 @@ func switched(id):
 		Globals.set("display/test_height",h)
 		Globals.save()
 
-func _on_add_new(addButton):
-	var category = custom_window.get_node("vbox/hbox4/category").get_text()
+func _on_add_new():
+	var category = custom_window.get_node("vbox/hbox4/category").get_item_text(custom_window.get_node("vbox/hbox4/category").get_selected())
 	var label = custom_window.get_node("vbox/hbox1/labelText").get_text()
-	var width = custom_window.get_node("vbox/hbox2/widthText").get_text()
-	var height = custom_window.get_node("vbox/hbox2/heightText").get_text()
-	if config_file.has_section(category):
-		config_file.set_value(category,label,width+"x"+height)
+	var width = int(custom_window.get_node("vbox/hbox2/widthText").get_text())
+	var height = int(custom_window.get_node("vbox/hbox2/heightText").get_text())
+	if height==0 or width==0 or  label=="":
+		var c = AcceptDialog.new()
+		add_child(c)
+		c.set_title("Error")
+		c.set_text("Resolution not added because of incomplete\n details")
+		c.popup_centered(Vector2(300,100))
+		c.set_exclusive(true)
+		c.show()
+	else:
+		config_file.set_value(category,label,str(width)+"x"+str(height))
 		config_file.save(path)
 		reload()
-	addButton.disconnect("pressed",self,"_on_add_new")
-	custom_window.get_node("vbox/hbox3").remove_child(addButton)
 	custom_window.hide()
 
 func _exit_tree():

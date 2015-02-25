@@ -31,3 +31,6 @@ iPhone 4/4S Landscape="960x640"
 iPhone 4/4S Portrait="640x960"
 iPhone 5 Landscape="1136x640"
 iPhone 5 Portrait="640x1136"
+
+[Other]
+Square 200x200="200x200"
