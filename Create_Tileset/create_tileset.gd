@@ -66,7 +66,13 @@ func parseJson(root,image,data):
 	var frames = {}
 	frames.parse_json(data)
 	for imagename in frames.frames:
-		var frame = frames.frames[imagename]["frame"]
+		if(frames.frames.has(imagename):
+			var frame = frames.frames[imagename]["frame"]
+			var spriteName = imagename;
+		else :
+			var frame = imagename["frame"]
+			var spriteName = imagename["filename"]
+
 		var s = Sprite.new()
 		s.set_texture(image)
 		s.set_region(true)
@@ -75,7 +81,7 @@ func parseJson(root,image,data):
 		var pos = Vector2(frame.x,frame.y)
 		s.set_pos(pos)
 		s.set_owner(root)
-		s.set_name(imagename)
+		s.set_name(spriteName)
 	
 func gridBreak(root,image):
 	var r=0
