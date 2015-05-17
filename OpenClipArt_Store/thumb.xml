@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resource_file type="PackedScene" subresource_count="4" version="1.1" version_name="Godot Engine v1.1.rc2.0995a230f6">
+	<resource type="StyleBoxFlat" path="local://1">
+		<real name="content_margin/left"> 1 </real>
+		<real name="content_margin/right"> 1 </real>
+		<real name="content_margin/top"> 1 </real>
+		<real name="content_margin/bottom"> 1 </real>
+		<color name="bg_color"> 0.0666667, 0.0666667, 0.0666667, 1 </color>
+		<color name="light_color"> 0.377121, 0.385787, 0.398102, 1 </color>
+		<color name="dark_color"> 0.8, 0.8, 0.8, 1 </color>
+		<int name="border_size"> 0 </int>
+		<bool name="border_blend"> False </bool>
+		<bool name="draw_bg"> True </bool>
+
+	</resource>
+	<resource type="GDScript" path="local://2">
+		<string name="script/source"> "tool&#000a;extends Panel&#000a;&#000a;var Http = null&#000a;var data = null&#000a;var sprite = null&#000a;var details_txt = null&#000a;var progress = null&#000a;var download_progress = null&#000a;var download_btn = null&#000a;&#000a;var path = null&#000a;&#000a;func _ready():&#000a;&#0009;pass&#000a;&#0009;&#000a;func _enter_tree():&#000a;&#0009;sprite = get_node(&quot;hbox/Panel/thumb&quot;)&#000a;&#0009;details_txt = get_node(&quot;hbox/details_vbox/details_rtxt&quot;)&#000a;&#0009;progress = get_node(&quot;hbox/Panel/progress&quot;)&#000a;&#0009;download_btn = get_node(&quot;hbox/details_vbox/download_btn&quot;)&#000a;&#0009;download_progress = get_node(&quot;hbox/details_vbox/progress&quot;)&#000a;&#0009;download_btn.connect(&quot;pressed&quot;,self,&quot;_on_download&quot;)&#000a;&#0009;Http = preload(&quot;http.xml&quot;)&#000a;&#0009;&#000a;&#0009;path = OS.get_data_dir()&#000a;&#0009;var lpos = path.find_last(&quot;/&quot;)&#000a;&#0009;path = path.substr(0,lpos)&#000a;&#0009;lpos = path.find_last(&quot;/&quot;)&#000a;&#0009;path = path.substr(0,lpos) + &quot;/plugins/OpenClipArt_Store/thumbs&quot;&#000a;&#0009;&#000a;&#0009;var d = Directory.new()&#000a;&#0009;if not d.dir_exists(path):&#000a;&#0009;&#0009;d.make_dir(path)&#000a;&#0009;&#000a;func _on_download():&#000a;&#0009;var http = Http.instance()&#000a;&#0009;http.connect(&quot;loading&quot;,self,&quot;_ondownloading&quot;)&#000a;&#0009;http.connect(&quot;loaded&quot;,self,&quot;_ondownloaded&quot;)&#000a;&#0009;var domaindata = _parse_domain_url(data.svg.png_full_lossy)&#000a;&#0009;http.get(domaindata.domain,domaindata.url,443,true)&#000a;&#0009;download_btn.hide()&#000a;&#0009;download_progress.show()&#000a;&#0009;&#000a;func _ondownloading(l,t):&#000a;&#0009;download_progress.set_value(l*100/t)&#000a;&#0009;&#000a;func _ondownloaded(r):&#000a;&#0009;var d = Directory.new()&#000a;&#0009;if not d.dir_exists(&quot;res://openclipart&quot;):&#000a;&#0009;&#0009;d.make_dir(&quot;res://openclipart&quot;)&#000a;&#0009;var f = File.new()&#000a;&#0009;f.open(&quot;res://openclipart/&quot;+str(data.title)+&quot;.png&quot;,File.WRITE)&#000a;&#0009;f.store_buffer(r)&#000a;&#0009;f.close()&#000a;&#0009;pass&#000a;&#0009;&#000a;&#000a;func initialize(d):&#000a;&#0009;data = d&#000a;&#0009;details_txt.set_use_bbcode(true)&#000a;&#0009;details_txt.parse_bbcode(&quot;[color=#FFFF00]&quot;+d.title+&quot;[/color]\n[color=#999999]&quot;+data.uploader+&quot;[/color]&quot;)&#000a;&#0009;var f = File.new()&#000a;&#0009;var filepath = path+&quot;/&quot;+str(data.id)+&quot;.png&quot;&#000a;&#0009;if f.file_exists(filepath):&#000a;&#0009;&#0009;_load_img_from_disk()&#000a;&#0009;else:&#000a;&#0009;&#0009;var http = Http.instance()&#000a;&#0009;&#0009;http.connect(&quot;loading&quot;,self,&quot;_onloading&quot;)&#000a;&#0009;&#0009;http.connect(&quot;loaded&quot;,self,&quot;_onloaded&quot;)&#000a;&#0009;&#0009;var domaindata = _parse_domain_url(data.svg.png_thumb)&#000a;&#0009;&#0009;http.get(domaindata.domain,domaindata.url,443,true)&#000a;&#0009;&#000a;&#0009;filepath = &quot;res://openclipart/&quot;+str(data.id)+&quot;.png&quot;&#000a;&#0009;if f.file_exists(filepath):&#000a;&#0009;&#0009;download_btn.set_disabled(true)&#000a;&#0009;&#000a;func _parse_domain_url(url):&#000a;&#0009;var r = {}&#000a;&#0009;r.domain = url.substr(0,url.findn(&quot;/&quot;,8))&#000a;&#0009;r.url = url.substr(r.domain.length(),url.length())&#000a;&#0009;return r&#000a;&#0009;&#000a;func _onloading(l,t):&#000a;&#0009;progress.set_value(l*100/t)&#000a;&#0009;&#000a;func _onloaded(r):&#000a;&#0009;var f = File.new()&#000a;&#0009;var filepath = path+&quot;/&quot;+str(data.id)+&quot;.png&quot;&#000a;&#0009;f.open(filepath,File.WRITE)&#000a;&#0009;f.store_buffer(r)&#000a;&#0009;f.close()&#000a;&#0009;_load_img_from_disk()&#000a;&#0009;&#000a;func _load_img_from_disk():&#000a;&#0009;progress.hide()&#000a;&#0009;var f = File.new()&#000a;&#0009;var filepath = path+&quot;/&quot;+str(data.id)+&quot;.png&quot;&#000a;&#0009;if f.file_exists(filepath):&#000a;&#0009;&#0009;var img = ImageTexture.new()&#000a;&#0009;&#0009;img.load(filepath);&#000a;&#0009;&#0009;var r = min(80.0/img.get_width(),100.0/img.get_height())&#000a;&#0009;&#0009;sprite.set_texture(img)&#000a;&#0009;&#0009;sprite.show()&#000a;&#0009;&#0009;sprite.set_scale(Vector2(r,r))&#000a;&#0009;&#0009;&#000a;&#000a;func _exit_tree():&#000a;&#0009;sprite.queue_free()&#000a;&#0009;data = null&#000a;&#0009;sprite = null&#000a;&#0009;details_txt = null&#000a;&#0009;progress = null&#000a;&#0009;download_progress = null&#000a;&#0009;path = null&#000a;&#0009;download_btn = null" </string>
+
+	</resource>
+	<resource type="StyleBoxFlat" path="local://3">
+		<real name="content_margin/left"> -1 </real>
+		<real name="content_margin/right"> -1 </real>
+		<real name="content_margin/top"> -1 </real>
+		<real name="content_margin/bottom"> -1 </real>
+		<color name="bg_color"> 0.0627451, 0.0627451, 0.0627451, 1 </color>
+		<color name="light_color"> 0.8, 0.8, 0.8, 1 </color>
+		<color name="dark_color"> 0.290238, 0.27456, 0.276446, 1 </color>
+		<int name="border_size"> 0 </int>
+		<bool name="border_blend"> True </bool>
+		<bool name="draw_bg"> True </bool>
+
+	</resource>
+	<main_resource>
+		<dictionary name="_bundled" shared="false">
+			<string> "conn_count" </string>
+			<int> 0 </int>
+			<string> "conns" </string>
+			<int_array  len="0"> 				 </int_array>
+			<string> "names" </string>
+			<string_array  len="72">
+				<string> "panel" </string>
+				<string> "Panel" </string>
+				<string> "_import_path" </string>
+				<string> "visibility/visible" </string>
+				<string> "visibility/opacity" </string>
+				<string> "visibility/self_opacity" </string>
+				<string> "visibility/light_mask" </string>
+				<string> "margin/right" </string>
+				<string> "margin/bottom" </string>
+				<string> "rect/min_size" </string>
+				<string> "focus_neighbour/left" </string>
+				<string> "focus_neighbour/top" </string>
+				<string> "focus_neighbour/right" </string>
+				<string> "focus_neighbour/bottom" </string>
+				<string> "focus/ignore_mouse" </string>
+				<string> "focus/stop_mouse" </string>
+				<string> "size_flags/horizontal" </string>
+				<string> "size_flags/vertical" </string>
+				<string> "size_flags/stretch_ratio" </string>
+				<string> "custom_styles/panel" </string>
+				<string> "script/script" </string>
+				<string> "__meta__" </string>
+				<string> "hbox" </string>
+				<string> "HBoxContainer" </string>
+				<string> "progress" </string>
+				<string> "ProgressBar" </string>
+				<string> "margin/top" </string>
+				<string> "range/min" </string>
+				<string> "range/max" </string>
+				<string> "range/step" </string>
+				<string> "range/page" </string>
+				<string> "range/value" </string>
+				<string> "range/exp_edit" </string>
+				<string> "rounded_values" </string>
+				<string> "percent/visible" </string>
+				<string> "thumb" </string>
+				<string> "Sprite" </string>
+				<string> "transform/pos" </string>
+				<string> "transform/rot" </string>
+				<string> "transform/scale" </string>
+				<string> "z/z" </string>
+				<string> "z/relative" </string>
+				<string> "texture" </string>
+				<string> "centered" </string>
+				<string> "offset" </string>
+				<string> "flip_h" </string>
+				<string> "flip_v" </string>
+				<string> "vframes" </string>
+				<string> "hframes" </string>
+				<string> "frame" </string>
+				<string> "modulate" </string>
+				<string> "region" </string>
+				<string> "region_rect" </string>
+				<string> "details_vbox" </string>
+				<string> "VBoxContainer" </string>
+				<string> "margin/left" </string>
+				<string> "details_rtxt" </string>
+				<string> "RichTextLabel" </string>
+				<string> "bbcode/enabled" </string>
+				<string> "bbcode/bbcode" </string>
+				<string> "HSeparator" </string>
+				<string> "download_btn" </string>
+				<string> "Button" </string>
+				<string> "disabled" </string>
+				<string> "toggle_mode" </string>
+				<string> "is_pressed" </string>
+				<string> "click_on_press" </string>
+				<string> "text" </string>
+				<string> "icon" </string>
+				<string> "flat" </string>
+				<string> "clip_text" </string>
+				<string> "align" </string>
+			</string_array>
+			<string> "node_count" </string>
+			<int> 10 </int>
+			<string> "nodes" </string>
+			<int_array  len="480"> 				-1, -1, 1, 0, -1, 20, 2, 0, 3, 1, 4, 2, 5, 2, 6, 3, 7, 4, 8, 5, 9, 6, 10, 0, 11, 0, 12, 0, 13, 0, 14, 7, 15, 7, 16, 8, 17, 8, 18, 2, 19, 9, 20, 10, 21, 11, 0, 0, 0, 23, 22, -1, 16, 2, 0, 3, 1, 4, 2, 5, 2, 6, 3, 7, 4, 8, 5, 10, 0, 11, 0, 12, 0, 13, 0, 14, 7, 15, 1, 16, 12, 17, 8, 18, 2, 0, 1, 0, 1, 1, -1, 18, 2, 0, 3, 1, 4, 2, 5, 2, 6, 3, 7, 13, 8, 5, 9, 14, 10, 0, 11, 0, 12, 0, 13, 0, 14, 7, 15, 1, 16, 8, 17, 8, 18, 2, 19, 15, 0, 2, 0, 25, 24, -1, 25, 2, 0, 3, 1, 4, 2, 5, 2, 6, 3, 26, 16, 7, 13, 8, 17, 9, 18, 10, 0, 11, 0, 12, 0, 13, 0, 14, 7, 15, 1, 16, 8, 18, 2, 27, 19, 28, 5, 29, 2, 30, 19, 31, 19, 32, 7, 33, 7, 34, 7, 0, 2, 0, 36, 35, -1, 21, 2, 0, 3, 7, 4, 2, 5, 2, 6, 3, 37, 20, 38, 19, 39, 21, 40, 22, 41, 1, 42, 23, 43, 1, 44, 24, 45, 7, 46, 7, 47, 3, 48, 3, 49, 22, 50, 25, 51, 7, 52, 26, 0, 1, 0, 54, 53, -1, 18, 2, 0, 3, 1, 4, 2, 5, 2, 6, 3, 55, 27, 7, 28, 8, 5, 10, 0, 11, 0, 12, 0, 13, 0, 14, 7, 15, 7, 16, 8, 17, 8, 18, 29, 21, 30, 0, 5, 0, 57, 56, -1, 19, 2, 0, 3, 1, 4, 2, 5, 2, 6, 3, 7, 31, 8, 32, 9, 33, 10, 0, 11, 0, 12, 0, 13, 0, 14, 7, 15, 1, 16, 8, 17, 8, 18, 34, 58, 1, 59, 35, 0, 5, 0, 60, 60, -1, 17, 2, 0, 3, 1, 4, 2, 5, 2, 6, 3, 26, 36, 7, 31, 8, 37, 10, 0, 11, 0, 12, 0, 13, 0, 14, 7, 15, 1, 16, 8, 17, 8, 18, 2, 0, 5, 0, 62, 61, -1, 26, 2, 0, 3, 1, 4, 2, 5, 2, 6, 3, 26, 38, 7, 31, 8, 39, 10, 0, 11, 0, 12, 0, 13, 0, 14, 7, 15, 1, 16, 8, 17, 8, 18, 2, 63, 7, 64, 7, 65, 7, 66, 1, 67, 40, 68, 23, 69, 1, 70, 7, 71, 3, 0, 5, 0, 25, 24, -1, 25, 2, 0, 3, 7, 4, 2, 5, 2, 6, 3, 26, 38, 7, 31, 8, 41, 9, 42, 10, 0, 11, 0, 12, 0, 13, 0, 14, 7, 15, 1, 16, 8, 18, 2, 27, 19, 28, 5, 29, 2, 30, 19, 31, 19, 32, 7, 33, 1, 34, 1, 0 </int_array>
+			<string> "variants" </string>
+			<array  len="43" shared="false">
+				<node_path> "" </node_path>
+				<bool> True </bool>
+				<real> 1 </real>
+				<int> 1 </int>
+				<real> 250 </real>
+				<real> 100 </real>
+				<vector2> 250, 100 </vector2>
+				<bool> False </bool>
+				<int> 2 </int>
+				<resource  resource_type="StyleBox" path="local://1">  </resource>
+				<resource  resource_type="Script" path="local://2">  </resource>
+				<dictionary  shared="false">
+					<string> "__editor_plugin_screen__" </string>
+					<string> "Script" </string>
+					<string> "__editor_plugin_states__" </string>
+					<dictionary  shared="false">
+						<string> "2D" </string>
+						<dictionary  shared="false">
+							<string> "ofs" </string>
+							<vector2> -192.408, -75.035 </vector2>
+							<string> "snap_grid" </string>
+							<bool> False </bool>
+							<string> "snap_offset" </string>
+							<vector2> 0, 0 </vector2>
+							<string> "snap_pixel" </string>
+							<bool> False </bool>
+							<string> "snap_relative" </string>
+							<bool> False </bool>
+							<string> "snap_rotation" </string>
+							<bool> False </bool>
+							<string> "snap_rotation_offset" </string>
+							<real> 0 </real>
+							<string> "snap_rotation_step" </string>
+							<real> 0.261799 </real>
+							<string> "snap_show_grid" </string>
+							<bool> False </bool>
+							<string> "snap_step" </string>
+							<vector2> 10, 10 </vector2>
+							<string> "zoom" </string>
+							<real> 1.507339 </real>
+						</dictionary>
+						<string> "3D" </string>
+						<dictionary  shared="false">
+							<string> "ambient_light_color" </string>
+							<color> 0.15, 0.15, 0.15, 1 </color>
+							<string> "default_light" </string>
+							<bool> True </bool>
+							<string> "default_srgb" </string>
+							<bool> False </bool>
+							<string> "deflight_rot_x" </string>
+							<real> 0.942478 </real>
+							<string> "deflight_rot_y" </string>
+							<real> 0.628319 </real>
+							<string> "fov" </string>
+							<real> 45 </real>
+							<string> "show_grid" </string>
+							<bool> True </bool>
+							<string> "show_origin" </string>
+							<bool> True </bool>
+							<string> "viewport_mode" </string>
+							<int> 1 </int>
+							<string> "viewports" </string>
+							<array  len="4" shared="false">
+								<dictionary  shared="false">
+									<string> "distance" </string>
+									<real> 4 </real>
+									<string> "listener" </string>
+									<bool> True </bool>
+									<string> "pos" </string>
+									<vector3> 0, 0, 0 </vector3>
+									<string> "use_environment" </string>
+									<bool> False </bool>
+									<string> "use_orthogonal" </string>
+									<bool> False </bool>
+									<string> "x_rot" </string>
+									<real> 0 </real>
+									<string> "y_rot" </string>
+									<real> 0 </real>
+								</dictionary>
+								<dictionary  shared="false">
+									<string> "distance" </string>
+									<real> 4 </real>
+									<string> "listener" </string>
+									<bool> False </bool>
+									<string> "pos" </string>
+									<vector3> 0, 0, 0 </vector3>
+									<string> "use_environment" </string>
+									<bool> False </bool>
+									<string> "use_orthogonal" </string>
+									<bool> False </bool>
+									<string> "x_rot" </string>
+									<real> 0 </real>
+									<string> "y_rot" </string>
+									<real> 0 </real>
+								</dictionary>
+								<dictionary  shared="false">
+									<string> "distance" </string>
+									<real> 4 </real>
+									<string> "listener" </string>
+									<bool> False </bool>
+									<string> "pos" </string>
+									<vector3> 0, 0, 0 </vector3>
+									<string> "use_environment" </string>
+									<bool> False </bool>
+									<string> "use_orthogonal" </string>
+									<bool> False </bool>
+									<string> "x_rot" </string>
+									<real> 0 </real>
+									<string> "y_rot" </string>
+									<real> 0 </real>
+								</dictionary>
+								<dictionary  shared="false">
+									<string> "distance" </string>
+									<real> 4 </real>
+									<string> "listener" </string>
+									<bool> False </bool>
+									<string> "pos" </string>
+									<vector3> 0, 0, 0 </vector3>
+									<string> "use_environment" </string>
+									<bool> False </bool>
+									<string> "use_orthogonal" </string>
+									<bool> False </bool>
+									<string> "x_rot" </string>
+									<real> 0 </real>
+									<string> "y_rot" </string>
+									<real> 0 </real>
+								</dictionary>
+							</array>
+							<string> "zfar" </string>
+							<real> 500 </real>
+							<string> "znear" </string>
+							<real> 0.1 </real>
+						</dictionary>
+						<string> "Script" </string>
+						<dictionary  shared="false">
+							<string> "current" </string>
+							<int> 0 </int>
+							<string> "sources" </string>
+							<array  len="1" shared="false">
+								<node_path> "/root/EditorNode/@Panel4/@VBoxContainer7/@HSplitContainer9/@VSplitContainer10/@VSplitContainer11/@VBoxContainer12/@Panel17/@Control19/@CanvasItemEditor5885/@VSplitContainer5810/@HSplitContainer5811/@Control5812/@Control5813/@Viewport5814/panel" </node_path>
+							</array>
+						</dictionary>
+					</dictionary>
+					<string> "__editor_run_settings__" </string>
+					<dictionary  shared="false">
+						<string> "custom_args" </string>
+						<string> "-l $scene" </string>
+						<string> "run_mode" </string>
+						<int> 0 </int>
+					</dictionary>
+				</dictionary>
+				<int> 3 </int>
+				<real> 80 </real>
+				<vector2> 80, 100 </vector2>
+				<resource  resource_type="StyleBox" path="local://3">  </resource>
+				<real> 42 </real>
+				<real> 58 </real>
+				<vector2> 80, 0 </vector2>
+				<real> 0 </real>
+				<vector2> 40, 50 </vector2>
+				<vector2> 1, 1 </vector2>
+				<int> 0 </int>
+				<resource name=""></resource>				<vector2> 0, 0 </vector2>
+				<color> 1, 1, 1, 1 </color>
+				<rect2> 0, 0, 0, 0 </rect2>
+				<real> 84 </real>
+				<real> 245 </real>
+				<real> 40 </real>
+				<dictionary  shared="false">
+					<string> "_edit_lock_" </string>
+					<bool> True </bool>
+				</dictionary>
+				<real> 161 </real>
+				<real> 66 </real>
+				<vector2> 161, 66 </vector2>
+				<real> 20 </real>
+				<string> "" </string>
+				<real> 70 </real>
+				<real> 73 </real>
+				<real> 77 </real>
+				<real> 98 </real>
+				<string> "Download" </string>
+				<real> 93 </real>
+				<vector2> 0, 5 </vector2>
+			</array>
+			<string> "version" </string>
+			<int> 1 </int>
+		</dictionary>
+
+	</main_resource>
+</resource_file>
