@@ -1,4 +1,4 @@
-This is a openclipart browser plugin from which you can browse the contents and download assets into the project folder.
+This is an openclipart browser plugin from which you can browse the contents and download assets into the project folder.
 
 Requirements:
 You must have a valid ssl certificate for openclipart to work. You need to set the certificate in godot project settings.
