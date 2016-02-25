@@ -1,36 +1,39 @@
 [Android]
 
-FWVGA Landscape="854x480"
-FWVGA Portrait="480x854"
-HVGA Landscape="480x320"
-HVGA Portrait="320x480"
-WSVGA Landscape="1024x600"
-WSVGA Portrait="600x1024"
-WVGA Landscape="800x480"
-WVGA Portrait="480x800"
-WXGA Landscape="1280x800"
-WXGA Portrait="800x1280"
+FWVGALandscape="854x480"
+FWVGAPortrait="480x854"
+HVGALandscape="480x320"
+HVGAPortrait="320x480"
+QHD="480x270"
+WSVGALandscape="1024x600"
+WSVGAPortrait="600x1024"
+WVGALandscape="800x480"
+WVGAPortrait="480x800"
+WXGALandscape="1280x800"
+WXGAPortrait="800x1280"
 
 [Desktop]
 
-Desktop 4:3="1024x768"
-Desktop FHD="1920x1080"
-Desktop FWXGA="1366x768"
-Desktop WXGA="1280x800"
+Desktop4:3="1024x768"
+DesktopFHD="1920x1080"
+DesktopFWXGA="1366x768"
+DesktopWXGA="1280x800"
+
+[Other]
+
+Square="400x400"
+Square200x200="200x200"
 
 [iPad]
 
-iPad 1/2/Mini Portrait="768x1024"
-iPad 3/4 Portrait="1536x2048"
-iPad 1/2/Mini Landscape="1024x768"
-iPad 3/4  Landscape="2048x1536"
+iPad1/2/MiniLandscape="1024x768"
+iPad1/2/MiniPortrait="768x1024"
+iPad3/4Landscape="2048x1536"
+iPad3/4Portrait="1536x2048"
 
 [iPhone]
 
-iPhone 4/4S Landscape="960x640"
-iPhone 4/4S Portrait="640x960"
-iPhone 5 Landscape="1136x640"
-iPhone 5 Portrait="640x1136"
-
-[Other]
-Square 200x200="200x200"
+iPhone4/4SLandscape="960x640"
+iPhone4/4SPortrait="640x960"
+iPhone5Landscape="1136x640"
+iPhone5Portrait="640x1136"

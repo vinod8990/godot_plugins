@@ -43,8 +43,8 @@ func reload():
 	for section in config_file.get_sections():
 		for label in config_file.get_section_keys(section):
 			var wh = config_file.get_value(section,label).split("x")
-			var w = wh.get(0)
-			var h = wh.get(1)
+			var w = wh[0]
+			var h = wh[1]
 			var t = label + "    (" + w + "x" + h +")"
 			res_data[t] = {"label":label,"width":w,"height":h}
 			main_popup.add_item(t)
@@ -54,8 +54,8 @@ func reload():
 	
 
 func switched(id):
-	var key = main_popup.get_item_text(main_popup.get_item_index(id))
-			
+	var key = main_popup.get_item_text(id)
+	
 	if key == "Add Custom Size":
 		if custom_window.get_parent()==null:
 			add_child(custom_window)
