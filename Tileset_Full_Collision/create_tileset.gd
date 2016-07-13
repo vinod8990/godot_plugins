@@ -74,6 +74,8 @@ func parseJson(root,image,data):
 		root.add_child(s)
 		var sb = StaticBody2D.new()
 		var cp = CollisionPolygon2D.new()
+		var v2d = Vector2Array([Vector2(-frame.w/2,-frame.h/2),Vector2(frame.w/2,-frame.h/2),Vector2(frame.w/2,frame.h/2),Vector2(-frame.w/2,frame.h/2)])
+		cp.set_polygon(v2d)
 		sb.add_child(cp)
 		s.add_child(sb) 
 		
@@ -100,6 +102,8 @@ func gridBreak(root,image):
 				root.add_child(s)
 				var sb = StaticBody2D.new()
 				var cp = CollisionPolygon2D.new()
+				var v2d = Vector2Array([Vector2(-ts.x/2,-ts.y/2),Vector2(ts.x/2,-ts.y/2),Vector2(ts.x/2,ts.y/2),Vector2(-ts.x/2,ts.y/2)])
+				cp.set_polygon(v2d)
 				sb.add_child(cp)
 				s.add_child(sb) 
 				
