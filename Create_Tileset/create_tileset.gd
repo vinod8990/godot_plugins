@@ -72,16 +72,9 @@ func parseJson(root,image,data):
 		s.set_region(true)
 		s.set_region_rect(Rect2(frame.x,frame.y,frame.w,frame.h))
 		root.add_child(s)
-		var sb = StaticBody2D.new()
-		var cp = CollisionPolygon2D.new()
-		sb.add_child(cp)
-		s.add_child(sb) 
-		
 		var pos = Vector2(frame.x,frame.y)
 		s.set_pos(pos)
 		s.set_owner(root)
-		sb.set_owner(root)
-		cp.set_owner(root)
 		s.set_name(imagename)
 	
 func gridBreak(root,image):
@@ -98,17 +91,10 @@ func gridBreak(root,image):
 				s.set_region(true)
 				s.set_region_rect(Rect2(i,j,ts.x,ts.y))
 				root.add_child(s)
-				var sb = StaticBody2D.new()
-				var cp = CollisionPolygon2D.new()
-				sb.add_child(cp)
-				s.add_child(sb) 
-				
 				var pos = Vector2(r*(ts.x+10),c*(ts.y+10))
 				c+=1
 				s.set_pos(pos)
 				s.set_owner(root)
-				sb.set_owner(root)
-				cp.set_owner(root)
 			j+=ts.y
 		i+=ts.x
 	
