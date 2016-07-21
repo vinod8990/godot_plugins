@@ -1,6 +1,8 @@
 tool
 extends EditorPlugin
 
+var ConvexHull = load(str(self.get_script().get_path()).replace("create_tileset.gd", "convex_hull.gd"))
+
 var plugin_button = null
 var dialog = null
 var imagepath = null

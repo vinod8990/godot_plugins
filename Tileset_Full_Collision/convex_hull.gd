@@ -1,24 +1,48 @@
 func cross(o, a, b):
-	return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+	return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x)
 
 func convex_hull(points):
-	points = sorted(set(points))
+	points = sorted(unique(points))
 	
-	if len(points) <= 1:
+	if points.size() <= 1:
 		return points
 	
-	lower = []
+	var lower = []
 	for p in points:
-		while len(lower) >= 2 and cross(lower[-2], lower[-1], p) <= 0:
-			lower.pop()
+		while lower.size() >= 2 and cross(lower[lower.size() - 2], lower[lower.size() - 1], p) <= 0:
+			lower.pop_back()
 		lower.append(p)
 	
 	# Build upper hull
-	upper = []
+	var upper = []
 	for p in reversed(points):
-		while len(upper) >= 2 and cross(upper[-2], upper[-1], p) <= 0:
-			upper.pop()
+		while upper.size() >= 2 and cross(upper[upper.size() - 2], upper[upper.size() - 1], p) <= 0:
+			upper.pop_back()
 		upper.append(p)
-	return lower[:-1] + upper[:-1] #this needs to be changed
+	
+	lower.resize(lower.size() - 1)
+	upper.resize(upper.size() - 1)
+	
+	return lower + upper
 
-# assert convex_hull([(i//10, i%10) for i in range(100)]) == [(0, 0), (9, 0), (9, 9), (0, 9)]
+func reversed(points):
+	var arr = []
+	for point in points:
+		arr.push_front(point)
+	return arr
+
+func compare(point1, point2):
+	if point1.x != point2.x:
+		return point1.x < point2.x
+	return point1.y < point2.y
+
+func sorted(points):
+	points.sort_custom(self, "compare")
+	return points
+
+func unique(points):
+	var arr = []
+	for point in points:
+		if arr.find(point) == -1:
+			arr.append(point)
+	return arr
