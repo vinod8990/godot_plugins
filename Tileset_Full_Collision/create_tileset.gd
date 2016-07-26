@@ -3,6 +3,7 @@ extends EditorPlugin
 
 var ConvexHull = load(str(self.get_script().get_path()).replace("create_tileset.gd", "convex_hull.gd"))
 
+var convex_hull = ConvexHull.new()
 var plugin_button = null
 var dialog = null
 var imagepath = null
@@ -75,21 +76,17 @@ func parseJson(root,image,data):
 		s.set_region_rect(Rect2(frame.x,frame.y,frame.w,frame.h))
 		root.add_child(s)
 		var sb = StaticBody2D.new()
-		var cp = CollisionShape2D.new()
-		var sh = RectangleShape2D.new()
-		sh.set_extents(Vector2(frame.x/2,frame.y/2))
-		cp.set_shape(sh)
-		
-#		var v2d = Vector2Array([Vector2(-frame.w/2,-frame.h/2),Vector2(frame.w/2,-frame.h/2),Vector2(frame.w/2,frame.h/2),Vector2(-frame.w/2,frame.h/2)])
-#		cp.set_polygon(v2d)
-		sb.add_child(cp)
-		s.add_child(sb) 
-		
+		var cs = CollisionShape2D.new()
+		var cp = ConvexPolygonShape2D.new()
+		cp.set_points(convex_hull.convex_hull(pointsRegion(image,frame.x,frame.y,frame.w,frame.h)))
+		cs.set_shape(cp)
+		sb.add_child(cs)
+		s.add_child(sb)
 		var pos = Vector2(frame.x,frame.y)
 		s.set_pos(pos)
 		s.set_owner(root)
 		sb.set_owner(root)
-		cp.set_owner(root)
+		cs.set_owner(root)
 		s.set_name(imagename)
 	
 func gridBreak(root,image):
@@ -107,22 +104,32 @@ func gridBreak(root,image):
 				s.set_region_rect(Rect2(i,j,ts.x,ts.y))
 				root.add_child(s)
 				var sb = StaticBody2D.new()
-				var cp = CollisionShape2D.new()
-#				var v2d = Vector2Array([Vector2(-ts.x/2,-ts.y/2),Vector2(ts.x/2,-ts.y/2),Vector2(ts.x/2,ts.y/2),Vector2(-ts.x/2,ts.y/2)])
-				var sh = RectangleShape2D.new()
-				sh.set_extents(Vector2(ts.x/2,ts.y/2))
-				cp.set_shape(sh)
-				sb.add_child(cp)
-				s.add_child(sb) 
-				
+				var cs = CollisionShape2D.new()
+				var cp = ConvexPolygonShape2D.new()
+				cp.set_points(convex_hull.convex_hull(pointsRegion(image,i,j,ts.x,ts.y)))
+				cs.set_shape(cp)
+				sb.add_child(cs)
+				s.add_child(sb)
 				var pos = Vector2(r*(ts.x+10),c*(ts.y+10))
 				c+=1
 				s.set_pos(pos)
 				s.set_owner(root)
 				sb.set_owner(root)
-				cp.set_owner(root)
+				cs.set_owner(root)
 			j+=ts.y
 		i+=ts.x
+	
+func pointsRegion(image,x,y,w,h):
+	var points = []
+	var data = image.get_data()
+	var height = image.get_height()
+	var width = image.get_width()
+	for i in range(x,x+w):
+		for j in range(y,y+h):
+			if i < width and j < height:
+				if data.get_pixel(i,j).a!=0:
+					points.append(Vector2(-w / 2 + i - x, -h / 2 + j - y))
+	return points
 	
 func checkRegionEmpty(image,x,y,w,h):
 	for i in range(x,x+w):
@@ -130,7 +137,6 @@ func checkRegionEmpty(image,x,y,w,h):
 			if not image.get_pixel(i,j).a==0:
 				return false
 	return true
-
 	
 func _exit_tree():
 	plugin_button.disconnect("pressed",self,"_show_dialog")
