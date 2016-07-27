@@ -45,6 +45,7 @@ func _on_dialog_confirm():
 	var root =  get_tree().get_edited_scene_root()
 	var image  = ImageTexture.new()
 	image.load(imagepath)
+	image.set_flags(0)
 	
 	var pp = imagepath
 	var lpos = pp.find_last("/")
@@ -71,6 +72,7 @@ func parseJson(root,image,data):
 	for imagename in frames.frames:
 		var frame = frames.frames[imagename]["frame"]
 		var s = Sprite.new()
+		s.set_centered(false)
 		s.set_texture(image)
 		s.set_region(true)
 		s.set_region_rect(Rect2(frame.x,frame.y,frame.w,frame.h))
@@ -81,6 +83,7 @@ func parseJson(root,image,data):
 		cp.set_points(convex_hull.convex_hull(pointsRegion(image,frame.x,frame.y,frame.w,frame.h)))
 		cs.set_shape(cp)
 		sb.add_child(cs)
+		sb.add_shape(cp)
 		s.add_child(sb)
 		var pos = Vector2(frame.x,frame.y)
 		s.set_pos(pos)
@@ -99,6 +102,7 @@ func gridBreak(root,image):
 		while j<image.get_height():
 			if not checkRegionEmpty(image.get_data(),i,j,ts.x,ts.y):
 				var s = Sprite.new()
+				s.set_centered(false)
 				s.set_texture(image)
 				s.set_region(true)
 				s.set_region_rect(Rect2(i,j,ts.x,ts.y))
@@ -109,6 +113,7 @@ func gridBreak(root,image):
 				cp.set_points(convex_hull.convex_hull(pointsRegion(image,i,j,ts.x,ts.y)))
 				cs.set_shape(cp)
 				sb.add_child(cs)
+				sb.add_shape(cp)
 				s.add_child(sb)
 				var pos = Vector2(r*(ts.x+10),c*(ts.y+10))
 				c+=1
@@ -124,11 +129,11 @@ func pointsRegion(image,x,y,w,h):
 	var data = image.get_data()
 	var height = image.get_height()
 	var width = image.get_width()
-	for i in range(x,x+w):
-		for j in range(y,y+h):
-			if i < width and j < height:
-				if data.get_pixel(i,j).a!=0:
-					points.append(Vector2(-w / 2 + i - x, -h / 2 + j - y))
+	for i in range(0, w + 1):
+		for j in range(0, h + 1):
+			if x + i < width and y + j < height:
+				if data.get_pixel(x + i, y + j).a != 0:
+					points.append(Vector2(i, j))
 	return points
 	
 func checkRegionEmpty(image,x,y,w,h):

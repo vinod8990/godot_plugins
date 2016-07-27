@@ -1,5 +1,5 @@
 func cross(o, a, b):
-	return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x)
+	return (a.x  - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x)
 
 func convex_hull(points):
 	points = sorted(unique(points))
