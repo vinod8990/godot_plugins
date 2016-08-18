@@ -23,7 +23,7 @@ func _enter_tree():
 	
 	reload()
 	
-	add_custom_control(CONTAINER_CANVAS_EDITOR_MENU,toolbar_button)
+	add_control_to_container(CONTAINER_CANVAS_EDITOR_MENU,toolbar_button)
 	main_popup.connect("item_pressed",self,"switched")
 	custom_window = preload("custom_res_popup.xml").instance()
 
