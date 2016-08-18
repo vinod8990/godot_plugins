@@ -1,11 +1,12 @@
 tool # Always declare as Tool, if it's meant to run in the editor.
 extends EditorPlugin
 
+var path = "res://addons/Resolution Switcher/list.txt"
+
 var toolbar_button = null
 var main_popup = null
 var config_file = null
 var res_data = null
-var path = null
 var custom_window = null
 
 func get_name(): 
@@ -28,13 +29,7 @@ func _enter_tree():
 	custom_window = preload("custom_res_popup.xml").instance()
 
 	
-func reload():
-	path = OS.get_data_dir()
-	var lpos = path.find_last("/")
-	path = path.substr(0,lpos)
-	lpos = path.find_last("/")
-	path = path.substr(0,lpos) + "/plugins/Resolution Switcher/list.txt"
-	
+func reload():	
 	config_file = ConfigFile.new()
 	config_file.load(path)
 	
